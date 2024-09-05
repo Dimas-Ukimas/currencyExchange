@@ -1,5 +1,6 @@
 package util;
 
+import java.io.*;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,7 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public final class ConnectionPool {
-    private static final String URL_KEY = "db.url";
+    private static final File tempFile;
     private static final String POOL_SIZE_KEY = "db.pool.size";
     private static ConnectionPool instance;
     private static final int DEFAULT_POOL_SIZE = 10;
@@ -29,7 +30,26 @@ public final class ConnectionPool {
     }
 
     static {
+        try {
+            tempFile = File.createTempFile("currency", ".sqlite");
+            loadDataBaseInTempFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         initConnectionPool();
+    }
+
+
+    private static void loadDataBaseInTempFile() throws IOException {
+        InputStream inputStream = ConnectionPool.class.getClassLoader().getResourceAsStream("currency.sqlite");
+
+        try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        }
     }
 
     private static void initConnectionPool() {
@@ -49,10 +69,9 @@ public final class ConnectionPool {
     }
 
 
-
     private static Connection open() {
         try {
-            return DriverManager.getConnection(PropertiesUtil.get(URL_KEY));
+            return DriverManager.getConnection("jdbc:sqlite:" + tempFile.getAbsolutePath());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
