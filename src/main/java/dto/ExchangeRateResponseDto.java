@@ -1,8 +1,10 @@
-package entity;
+package dto;
+
+import entity.Currency;
 
 import java.math.BigDecimal;
 
-public class ExchangeRate {
+public class ExchangeRateResponseDto {
 
     private int id;
     private Currency baseCurrency;
@@ -33,6 +35,7 @@ public class ExchangeRate {
         this.id = id;
     }
 
+
     public BigDecimal getRate() {
         return rate;
     }
@@ -40,17 +43,4 @@ public class ExchangeRate {
     public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
-
-
-    @Override
-    public String toString() {
-        return "ExchangeRate{" +
-                "id=" + id +
-                ", BaseCurrency=" + baseCurrency +
-                ", TargetCurrency=" + targetCurrency +
-                ", Rate=" + rate +
-                "}";
-
-    }
-
 }

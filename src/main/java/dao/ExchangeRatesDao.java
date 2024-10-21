@@ -4,7 +4,10 @@ import entity.ExchangeRate;
 import util.ConnectionPool;
 import util.factory.ExchangeRateFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +15,7 @@ import java.util.Optional;
 
 public class ExchangeRatesDao {
 
-    ExchangeRateFactory exchangeRateFactory = new ExchangeRateFactory();
+    private final ExchangeRateFactory exchangeRateFactory = new ExchangeRateFactory();
 
     public List<ExchangeRate> findAllExchangeRates() throws SQLException {
 
@@ -76,7 +79,7 @@ public class ExchangeRatesDao {
         }
     }
 
-    public ExchangeRate saveExchangeRate(ExchangeRate exchangeRate) throws SQLException {
+    public Optional<ExchangeRate> saveExchangeRate(ExchangeRate exchangeRate) throws SQLException {
 
         String currencyCheckQuery = "SELECT COUNT(*) FROM Currencies WHERE Code IN (?,?)";
 
@@ -120,7 +123,8 @@ public class ExchangeRatesDao {
 
                 int rowCount = resultSet.getInt(1);
                 if (rowCount < 2) {
-                    throw new SQLException("404");
+
+                    return Optional.empty();
                 }
             }
 
@@ -128,7 +132,7 @@ public class ExchangeRatesDao {
 
             try (ResultSet resultSet = selectStatement.executeQuery()) {
 
-                return exchangeRateFactory.createExchangeRate(resultSet);
+                return Optional.of(exchangeRateFactory.createExchangeRate(resultSet));
             }
         }
     }

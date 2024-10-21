@@ -2,7 +2,7 @@ package dao;
 
 import entity.Currency;
 import util.ConnectionPool;
-import util.Factory.CurrencyFactory;
+import util.factory.CurrencyFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,10 +11,10 @@ import java.util.Optional;
 
 public class CurrencyDao {
 
-    CurrencyFactory currencyFactory = new CurrencyFactory();
+   private final CurrencyFactory currencyFactory = new CurrencyFactory();
 
-    public Currency saveCurrency(Currency currency) throws SQLException {
-        final String query = "INSERT  INTO Currencies (FullName, code, sign) VALUES (?,?,?)";
+    public Optional<Currency> saveCurrency(Currency currency) throws SQLException {
+        final String query = "INSERT INTO Currencies (FullName, code, sign) VALUES (?,?,?)";
 
         try (Connection connection = ConnectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -22,14 +22,21 @@ public class CurrencyDao {
             preparedStatement.setString(2, currency.getCode());
             preparedStatement.setString(3, currency.getSign());
 
-            preparedStatement.executeUpdate();
+            try {
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                int SQLITE_CONSTRAINT_ERROR_CODE = 19;
+                if (e.getErrorCode() != SQLITE_CONSTRAINT_ERROR_CODE) {
+                    throw new SQLException();
+                }
+                return Optional.empty();
+            }
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 currency.setId(generatedKeys.getInt(1));
             }
         }
-
-        return currency;
+        return Optional.of(currency);
     }
 
 

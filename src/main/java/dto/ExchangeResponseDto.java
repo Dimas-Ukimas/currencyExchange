@@ -1,13 +1,16 @@
-package entity;
+package dto;
+
+import entity.Currency;
 
 import java.math.BigDecimal;
 
-public class ExchangeRate {
+public class ExchangeResponseDto {
 
-    private int id;
     private Currency baseCurrency;
     private Currency targetCurrency;
     private BigDecimal rate;
+    private BigDecimal amount;
+    private BigDecimal convertedAmount;
 
     public Currency getBaseCurrency() {
         return baseCurrency;
@@ -25,14 +28,6 @@ public class ExchangeRate {
         this.targetCurrency = targetCurrency;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public BigDecimal getRate() {
         return rate;
     }
@@ -41,16 +36,19 @@ public class ExchangeRate {
         this.rate = rate;
     }
 
-
-    @Override
-    public String toString() {
-        return "ExchangeRate{" +
-                "id=" + id +
-                ", BaseCurrency=" + baseCurrency +
-                ", TargetCurrency=" + targetCurrency +
-                ", Rate=" + rate +
-                "}";
-
+    public BigDecimal getAmount() {
+        return amount;
     }
 
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public BigDecimal getConvertedAmount() {
+        return convertedAmount;
+    }
+
+    public void setConvertedAmount(BigDecimal convertedAmount) {
+        this.convertedAmount = convertedAmount;
+    }
 }
