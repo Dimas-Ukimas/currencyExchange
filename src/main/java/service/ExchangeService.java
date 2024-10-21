@@ -44,7 +44,7 @@ public class ExchangeService {
         }
 
         if (exchangeResult.isPresent()) {
-            BigDecimal convertedAmount = exchangeResult.get().getRate().multiply(amount).setScale(6, RoundingMode.HALF_UP);
+            BigDecimal convertedAmount = exchangeResult.get().getRate().multiply(amount).setScale(2, RoundingMode.HALF_UP);
 
             return exchangeResult.map(exchangeRate -> converter.convertToDto(exchangeRate, amount, convertedAmount));
         }
