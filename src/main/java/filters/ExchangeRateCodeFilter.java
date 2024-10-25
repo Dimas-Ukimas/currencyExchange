@@ -8,9 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @WebFilter("/exchangeRate/*")
-public class ExchangeRateCodeFilter implements Filter {
+public class ExchangeRateCodeFilter extends BaseFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -20,11 +21,17 @@ public class ExchangeRateCodeFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+        setCorsHeaders(response);
+        setRequestResponseEncoding(request, response);
+
         boolean isCurrenciesCodesValid = request.getPathInfo().substring(1).matches("^[A-Za-z]{6}$");
 
         if (!isCurrenciesCodesValid) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(response.getWriter(), "Currencies codes are invalid or absent");
+            objectMapper.writeValue(response.getWriter(), Collections.singletonMap(
+                    "message",
+                    "Currencies codes are invalid or absent"
+            ));
 
             return;
         }

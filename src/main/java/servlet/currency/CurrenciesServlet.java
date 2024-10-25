@@ -13,6 +13,7 @@ import service.CurrencyService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +34,10 @@ public class CurrenciesServlet extends HttpServlet {
 
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(resp.getWriter(), "Oops! Something went wrong in database. Please, try again later.");
+            objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                    "message",
+                    "Oops! Something went wrong in database. Please, try again later"
+            ));
         }
     }
 
@@ -55,7 +59,10 @@ public class CurrenciesServlet extends HttpServlet {
 
             if (savedCurrency.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
-                objectMapper.writeValue(resp.getWriter(), "This currency is already exist");
+                objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                        "message",
+                        "This currency is already exist"
+                ));
 
                 return;
             }
@@ -64,8 +71,10 @@ public class CurrenciesServlet extends HttpServlet {
 
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(resp.getWriter(), "Oops! Something went wrong in database. Please, try again later.");
+            objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                    "message",
+                    "Oops! Something went wrong in database. Please, try again later"
+            ));
         }
-
     }
 }

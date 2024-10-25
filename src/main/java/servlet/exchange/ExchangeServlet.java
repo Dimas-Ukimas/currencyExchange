@@ -13,6 +13,7 @@ import service.ExchangeService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Optional;
 
 @WebServlet("/exchange")
@@ -39,7 +40,10 @@ public class ExchangeServlet extends HttpServlet {
 
             if (exchangeResult.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                objectMapper.writeValue(resp.getWriter(), "Exchange operation cannot be completed due to absence of needed exchange rate.");
+                objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                        "message",
+                        "Exchange operation cannot be completed due to absence of needed exchange rate"
+                ));
 
                 return;
             }
@@ -48,8 +52,10 @@ public class ExchangeServlet extends HttpServlet {
 
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(resp.getWriter(), "Oops! Something went wrong in database. Please, try again later.");
+            objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                    "message",
+                    "Oops! Something went wrong in database. Please, try again later"
+            ));
         }
-
     }
 }

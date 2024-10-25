@@ -9,9 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collections;
 
 @WebFilter("/exchangeRates")
-public class ExchangeRateFieldFilter implements Filter {
+public class ExchangeRateFieldFilter extends BaseFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -20,6 +21,9 @@ public class ExchangeRateFieldFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        setCorsHeaders(response);
+        setRequestResponseEncoding(request, response);
 
         if ("POST".equalsIgnoreCase(request.getMethod())) {
 
@@ -33,7 +37,10 @@ public class ExchangeRateFieldFilter implements Filter {
 
             if (!isBaseCurrencyCodeValid || !isTargetCurrencyCodeValid || !isRateValid) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                objectMapper.writeValue(response.getWriter(), "One or more fields are absent or invalid");
+                objectMapper.writeValue(response.getWriter(), Collections.singletonMap(
+                        "message",
+                        "One or more fields are absent or invalid"
+                ));
 
                 return;
             }

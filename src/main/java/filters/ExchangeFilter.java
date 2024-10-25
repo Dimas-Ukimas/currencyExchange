@@ -9,9 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collections;
 
 @WebFilter("/exchange")
-public class ExchangeFilter implements Filter {
+public class ExchangeFilter extends BaseFilter{
 
     private final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -20,6 +21,9 @@ public class ExchangeFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        setCorsHeaders(response);
+        setRequestResponseEncoding(request, response);
 
         String baseCurrencyCode = request.getParameter("from");
         String targetCurrencyCode = request.getParameter("to");
@@ -31,7 +35,10 @@ public class ExchangeFilter implements Filter {
 
         if (!isBaseCurrencyCodeValid || !isTargetCurrencyCodeValid || !isAmountValid) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(response.getWriter(), "One or more parameters are absent or invalid");
+            objectMapper.writeValue(response.getWriter(), Collections.singletonMap(
+                    "message",
+                    "One or more parameters are absent or invalid"
+            ));
 
             return;
         }

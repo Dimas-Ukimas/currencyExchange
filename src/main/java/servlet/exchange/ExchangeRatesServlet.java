@@ -13,6 +13,7 @@ import service.ExchangeRateService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,10 @@ public class ExchangeRatesServlet extends HttpServlet {
 
             if (exchangeRates.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
-                objectMapper.writeValue(resp.getWriter(), "There is no exchange rates in data base.");
+                objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                        "message",
+                        "There is no exchange rates in data base"
+                ));
 
                 return;
             }
@@ -39,9 +43,11 @@ public class ExchangeRatesServlet extends HttpServlet {
 
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(resp.getWriter(), "Oops! Something went wrong in database. Please, try again later.");
+            objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                    "message",
+                    "Oops! Something went wrong in database. Please, try again later"
+            ));
         }
-
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -61,7 +67,10 @@ public class ExchangeRatesServlet extends HttpServlet {
 
             if (savedExchangeRate.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                objectMapper.writeValue(resp.getWriter(), "One(or both) currencies does not exist in database.");
+                objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                        "message",
+                        "One(or both) currencies does not exist in database"
+                ));
 
                 return;
             }
@@ -73,13 +82,19 @@ public class ExchangeRatesServlet extends HttpServlet {
             int SQLITE_CONSTRAINT_VIOLATION_ERROR_CODE = 19;
             if (e.getErrorCode() == SQLITE_CONSTRAINT_VIOLATION_ERROR_CODE) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
-                objectMapper.writeValue(resp.getWriter(), "This exchange rate is already exist in database.");
+                objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                        "message",
+                        "This exchange rate is already exist in database"
+                ));
 
                 return;
             }
 
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(resp.getWriter(), "Oops! Something went wrong in database. Please, try again later.");
+            objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                    "message",
+                    "Oops! Something went wrong in database. Please, try again later"
+            ));
         }
     }
 }

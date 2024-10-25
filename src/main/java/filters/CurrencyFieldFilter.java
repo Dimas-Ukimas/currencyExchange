@@ -8,9 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @WebFilter("/currencies")
-public class CurrencyFieldFilter implements Filter {
+public class CurrencyFieldFilter extends BaseFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -19,6 +20,9 @@ public class CurrencyFieldFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        setCorsHeaders(response);
+        setRequestResponseEncoding(request, response);
 
         if ("POST".equals(request.getMethod())) {
 
@@ -32,7 +36,10 @@ public class CurrencyFieldFilter implements Filter {
 
             if (!isNameValid || !isCodeValid || !isSignValid) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                objectMapper.writeValue(response.getWriter(), "One or more fields are absent or invalid.");
+                objectMapper.writeValue(response.getWriter(), Collections.singletonMap(
+                        "message",
+                        "One or more fields are absent or invalid"
+                ));
 
                 return;
             }

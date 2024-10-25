@@ -14,6 +14,7 @@ import service.ExchangeRateService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,8 +45,10 @@ public class ExchangeRateServlet extends HttpServlet {
 
             if (exchangeRate.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                objectMapper.writeValue(resp.getWriter(),
-                        "Currency exchange not found.");
+                objectMapper.writeValue(resp.getWriter(),Collections.singletonMap(
+                        "message",
+                        "Currency exchange not found"
+                ));
 
                 return;
             }
@@ -54,7 +57,10 @@ public class ExchangeRateServlet extends HttpServlet {
 
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(resp.getWriter(), "Oops! Something went wrong in database. Please, try again later.");
+            objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                    "message",
+                    "Oops! Something went wrong in database. Please, try again later"
+            ));
         }
     }
 
@@ -77,9 +83,12 @@ public class ExchangeRateServlet extends HttpServlet {
             }
         }
 
-        if (rate == null || !rate.matches("^\\d+(\\.\\d+)?([eE][-+]?\\d+)?$")) {
+        if (rate == null || !rate.matches("^\\d+(\\.\\d+)?([eE][-+]?\\d+)?$") || new BigDecimal(rate).compareTo(BigDecimal.ZERO) == 0) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(resp.getWriter(), "Rate field is empty or invalid");
+            objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                    "message",
+                    "Rate field is empty or invalid"
+            ));
 
             return;
         }
@@ -91,7 +100,10 @@ public class ExchangeRateServlet extends HttpServlet {
 
             if (exchangeRate.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                objectMapper.writeValue(resp.getWriter(), "Such exchange rate does not exist in database.");
+                objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                        "message",
+                        "Such exchange rate does not exist in database"
+                ));
 
                 return;
             }
@@ -100,7 +112,10 @@ public class ExchangeRateServlet extends HttpServlet {
 
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(resp.getWriter(), "Oops! Something went wrong in database. Please, try again later.");
+            objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                    "message",
+                    "Oops! Something went wrong in database. Please, try again later"
+            ));
         }
     }
 }

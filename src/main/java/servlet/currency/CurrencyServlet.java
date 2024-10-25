@@ -11,6 +11,7 @@ import service.CurrencyService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Optional;
 
 @WebServlet("/currency/*")
@@ -28,7 +29,10 @@ public class CurrencyServlet extends HttpServlet {
 
             if (currency.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                objectMapper.writeValue(resp.getWriter(), "Currency not found in database");
+                objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                        "message",
+                        "Currency not found in database"
+                ));
 
                 return;
             }
@@ -37,7 +41,10 @@ public class CurrencyServlet extends HttpServlet {
 
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(resp.getWriter(), "Oops! Something went wrong in database. Please, try again later.");
+            objectMapper.writeValue(resp.getWriter(), Collections.singletonMap(
+                    "message",
+                    "Oops! Something went wrong in database. Please, try again later"
+            ));
         }
     }
 }
