@@ -186,11 +186,11 @@ Example of a request - GET /exchange?from=USD&to=AUD&amount=10.
 
 Obtaining an exchange rate can take place according to one of three scenarios. Let's say we make a transfer from currency A to currency B:
 
-Scenario 1: Use a currency pair AB in the data base, if it exists (direct course)
+**Scenario 1**: Use a currency pair AB in the data base, if it exists (direct course)
 
-Scenario 2: There is no AB pair, but we have a BA pair. Hence, we take its exchange rate and count the opposite to get AB (reversed course)
+**Scenario 2**: There is no AB pair, but we have a BA pair. Hence, we take its exchange rate and count the opposite to get AB (reversed course)
 
-Scenario 3: There are USD-A and USD-B currency pairs in the data base. So we can calculate the AB rate from these rates (cross course)
+**Scenario 3**: There are USD-A and USD-B currency pairs in the data base. So we can calculate the AB rate from these rates (cross course)
 
 Response example:
 ```
