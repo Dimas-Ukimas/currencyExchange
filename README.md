@@ -20,7 +20,9 @@ The REST API for describing currencies and their exhange rates, which allows to 
 
 #### GET /currencies
 
-Fetching a list of currencies. Response example:
+Fetching a list of currencies. 
+
+Response example:
 
 ```
 [
@@ -41,7 +43,9 @@ Fetching a list of currencies. Response example:
 
 #### GET /currency/EUR 
 
-Fetching a particular currency. Response example:
+Fetching a particular currency. 
+
+Response example:
 ```
 {
     "id": 0,
@@ -72,7 +76,6 @@ Response example (JSON representation of an inserted record):
 Fetching a list of all exchange rates. 
 
 Response example:
-
 ```
 [
     {
@@ -99,7 +102,6 @@ Response example:
 Fetching a specific exchange rate. The currency pair defined by consecutive currency codes in the request address.
 
 Response example:
-
 ```
 {
     "id": 0,
@@ -131,7 +133,6 @@ targetCurrencyCode - EUR
 rate - 0.99
 
 Response example (JSON representation of an inserted record):
-
 ```
 {
     "id": 0,
@@ -156,7 +157,6 @@ Response example (JSON representation of an inserted record):
 Updating the existing exchange rate in the database. The currency pair is defined by consecutive currency codes in the request address. The data is sent in the request body as form fields (x-www-form-urlencoded). The only field in the form is rate.
 
 Response example (JSON representation of an inserted record):
-
 ```
 {
     "id": 0,
@@ -193,7 +193,6 @@ Scenario 2: There is no AB pair, but we have a BA pair. Hence, we take its excha
 Scenario 3: There are USD-A and USD-B currency pairs in the data base. So we can calculate the AB rate from these rates (cross course)
 
 Response example:
-
 ```
 {
     "baseCurrency": {
